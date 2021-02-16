@@ -7,5 +7,6 @@ void main() {
   debugPaintSizeEnabled = false;
 
   runApp(App());
+  print('Tayyab');
 }
 
