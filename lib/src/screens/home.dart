@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../widgets/cat.dart';
 import 'package:flutter/material.dart';
 
@@ -9,16 +11,42 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   Animation<double> catAnimation;
   AnimationController catController;
 
+  Animation<double> boxAnimation;
+  AnimationController boxController;
+
   initState() {
     super.initState();
 
     catController =
-        AnimationController(duration: Duration(seconds: 1, milliseconds: 200), vsync: this);
+        AnimationController(duration: Duration(milliseconds: 200), vsync: this);
 
-    catAnimation = Tween(begin: -140.0, end: -200.0).animate(CurvedAnimation(
+    catAnimation = Tween(begin: -100.0, end: -200.0).animate(CurvedAnimation(
       parent: catController,
-      curve:  Curves.easeIn,
+      curve: Curves.easeIn,
     ));
+
+    boxController = AnimationController(
+      duration: Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    boxAnimation = Tween(begin: pi * 0.6, end: pi * 0.65).animate(
+      CurvedAnimation(
+        parent: boxController,
+        curve: Curves.linear,
+      ),
+    );
+
+    boxAnimation.addStatusListener(
+      (status) {
+        if (status == AnimationStatus.completed) 
+          boxController.reverse();
+        else if(status == AnimationStatus.dismissed)
+          boxController.forward();
+      },
+    );
+
+    boxController.forward();
   }
 
   onTap() {
@@ -51,10 +79,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           child: Center(
             child: Stack(
               overflow: Overflow.visible,
-              alignment: AlignmentDirectional.center,
               children: [
                 buildCatAnimation(context),
                 buildBox(),
+                buildLeftFlap(),
               ],
             ),
           ),
@@ -84,6 +112,28 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       height: 200.0,
       width: 200.0,
       color: Colors.brown,
+    );
+  }
+
+  Widget buildLeftFlap() {
+    return Positioned(
+      left: 8.0,
+      top: 2.5,
+      child: AnimatedBuilder(
+        animation: boxAnimation,
+        builder: (ctx, child) {
+          return Transform.rotate(
+            alignment: Alignment.topLeft,
+            angle: boxAnimation.value,
+            child: child,
+          );
+        },
+        child: Container(
+          height: 10.0,
+          width: 120.0,
+          color: Colors.brown,
+        ),
+      ),
     );
   }
 }
