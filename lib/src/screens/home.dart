@@ -20,7 +20,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     catController =
         AnimationController(duration: Duration(milliseconds: 200), vsync: this);
 
-    catAnimation = Tween(begin: -100.0, end: -200.0).animate(CurvedAnimation(
+    catAnimation = Tween(begin: -110.0, end: -200.0).animate(CurvedAnimation(
       parent: catController,
       curve: Curves.easeIn,
     ));
@@ -33,7 +33,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     boxAnimation = Tween(begin: pi * 0.6, end: pi * 0.65).animate(
       CurvedAnimation(
         parent: boxController,
-        curve: Curves.linear,
+        curve: Curves.easeInOut,
       ),
     );
 
@@ -50,14 +50,17 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   onTap() {
+    
     var status = catAnimation.status;
 
     switch (status) {
       case AnimationStatus.dismissed:
         catController.forward();
+        boxController.stop();
         break;
       case AnimationStatus.completed:
         catController.reverse();
+        boxController.reverse();
         break;
       case AnimationStatus.forward:
         catController.reverse();
@@ -83,6 +86,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 buildCatAnimation(context),
                 buildBox(),
                 buildLeftFlap(),
+                buildRightFlap(),
               ],
             ),
           ),
@@ -125,6 +129,28 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           return Transform.rotate(
             alignment: Alignment.topLeft,
             angle: boxAnimation.value,
+            child: child,
+          );
+        },
+        child: Container(
+          height: 10.0,
+          width: 120.0,
+          color: Colors.brown,
+        ),
+      ),
+    );
+  }
+
+  Widget buildRightFlap() {
+    return Positioned(
+      right: 8.0,
+      top: 2.5,
+      child: AnimatedBuilder(
+        animation: boxAnimation,
+        builder: (ctx, child) {
+          return Transform.rotate(
+            alignment: Alignment.topRight,
+            angle: -(boxAnimation.value),
             child: child,
           );
         },
