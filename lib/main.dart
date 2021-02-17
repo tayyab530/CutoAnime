@@ -7,8 +7,5 @@ void main() {
   debugPaintSizeEnabled = false;
 
   runApp(App());
-  print('Tayyab${123}');
-
-  print("Test");
 }
 
